@@ -5,18 +5,20 @@ const tasksController = require('../controllers/tasksController');
 console.log("vamos a checar el auth");
 const auth = require('../middleware/auth'); // JWT authentication
 
+// Protect all task routes with authentication
+router.use(auth); 
 // Create a new task
-router.post('/', auth, tasksController.createTask);
+router.post('/', tasksController.createTask);
 // Get all tasks (potentially with pagination/filtering later)
-router.get('/', auth, tasksController.getAllTasks);
+router.get('/', tasksController.getAllTasks);
 
 // Get a single task by ID
-router.get('/:id', auth, tasksController.getTaskById);
+router.get('/:id', tasksController.getTaskById);
 
 // Update a task by ID
-router.put('/:id', auth, tasksController.updateTask);
+router.put('/:id', tasksController.updateTask);
 
 // Delete a task by ID
-router.delete('/:id', auth, tasksController.deleteTask);
+router.delete('/:id', tasksController.deleteTask);
 
 module.exports =  { router };

@@ -19,7 +19,8 @@ const taskSchema = new mongoose.Schema({
   // If you want to associate tasks with users:
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference to your User model
+    ref: 'User', 
+    required: true // Reference to your User model
   },
 });
 
