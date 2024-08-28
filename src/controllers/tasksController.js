@@ -3,9 +3,14 @@ const Task = require('../models/Task'); // Correct import
 module.exports = { 
     createTask: async (req, res) => {
   try {
-    const { title, description, dueDate, status } = req.body;
-    const userId = req.user._id;
+    console.log("En el create task");
+    console.log("El user");
+    console.log(req.user);
 
+    const { title, description, dueDate, status } = req.body;
+    const userId = req.user.userId;
+    console.log("Obteniendo el user id");
+    console.log(userId);
     const newTask = new Task( {
       title,
       description,
@@ -38,7 +43,7 @@ getTaskById: async (req, res)  => {
   
   getAllTasks: async (req, res) =>  {
     try {
-      const userId = req.user._id;
+      const userId = req.user.userId;
       const tasks = await Task.find({ user: userId });
       res.json(tasks);
     } catch (error) {
