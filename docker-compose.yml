@@ -5,8 +5,8 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGO_URI: mongodb://mongo:27017/my-tasks-db
-      JWT_SECRET: your-jwt-secret-key 
+      MONGO_URI: mongodb://root:example@mongo:27017/my-tasks-db?authSource=admin
+      JWT_SECRET: your-jwt-secret-key
     depends_on:
       - mongo
   mongo:

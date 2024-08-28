@@ -3,12 +3,14 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
-console.log(" Configurando el TasksRoutes-router");
+console.log(" Load environment variables");
+dotenv.config();
+
+console.log(" Configurando el TasksRoutes-routerx");
 const tasksRoutes = require('../src/routes/tasks').router; // Assuming you export 'router' from your routes file
 console.log(" Configurando el Auth Routerv ");
 const authRoutes = require('./routes/authRoutes');
 
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +19,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json()); 
 
+console.log("MONGO_URI:", process.env.MONGO_URI); 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
