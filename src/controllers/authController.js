@@ -38,8 +38,10 @@ exports.login = async (req, res) => {
     //const isMatch = await bcrypt.compare(password, user.password);
     //if (!isMatch) return res.status(401).json({ error: 'Not matching passwords' });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-    res.json({ token }); 
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5m'});
+    console.log("Imprimiendo el token con expiracion");
+    console.log(token);
+    res.json({ token, username: user.username }); // Return username along with the token 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

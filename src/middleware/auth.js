@@ -1,5 +1,20 @@
 const jwt = require('jsonwebtoken');
 console.log("En el middleware/auth.js");
+
+// Function to generate access token
+const generateAccessToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, {
+      expiresIn: '3m', // Access token expires in 15 minutes
+    });
+  };
+  
+  // Function to generate refresh token
+  const generateRefreshToken = (userId) => {
+    return jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: '7d', // Refresh token expires in 7 days (example)
+    });
+  };
+
 const verifyToken = (req, res, next) => {
     const token = req.header('Authorization');
 
@@ -12,7 +27,11 @@ const verifyToken = (req, res, next) => {
         req.user = decoded; 
         next();
     } catch (ex) {
-        res.status(400).json({ message: 'Invalid token.' });
+        if (ex.name === 'TokenExpiredError') {
+            // Handle token expiration (potentially with refresh token)
+            return res.status(401).json({ message: 'Token expired.', expiredAt: ex.expiredAt });
+          }
+          res.status(401).json({ message: 'Invalid token.' });
     }
 };
 

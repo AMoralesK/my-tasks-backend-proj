@@ -44,8 +44,38 @@ getTaskById: async (req, res)  => {
   getAllTasks: async (req, res) =>  {
     try {
       const userId = req.user.userId;
-      const tasks = await Task.find({ user: userId });
-      res.json(tasks);
+      const page = parseInt(req.query.page) || 1; // Get current page, default to 1
+      const limit = parseInt(req.query.limit) || 10; // Number of items per page, default to 10
+
+      // Calculate the skip value for pagination
+      const skip = (page - 1) * limit;
+
+      // Create a filter object for MongoDB's find()
+      const filter = { user: userId };
+      // Check if status query parameter is provided
+      if (req.query.status) {
+        // If multiple statuses are provided (comma-separated), split them into an array
+        if (typeof req.query.status === 'string' && req.query.status.includes(',')) {
+          filter.status = { $in: req.query.status.split(',').map(s => s.trim()) };
+        } else {
+          // Otherwise, filter by the single status
+          filter.status = req.query.status; 
+        }
+      }
+      const tasks = await Task.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+      
+      // Get total count of tasks for the user
+      const totalCount = await Task.countDocuments(filter);
+
+      res.json({ 
+        tasks, 
+        currentPage: page, 
+        totalPages: Math.ceil(totalCount / limit), 
+        totalCount 
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
