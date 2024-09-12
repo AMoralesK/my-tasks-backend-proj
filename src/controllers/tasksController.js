@@ -49,6 +49,7 @@ getTaskById: async (req, res)  => {
 
       // Calculate the skip value for pagination
       const skip = (page - 1) * limit;
+      const sortOrder = req.query.sortOrder || 'asc'; // Get sort order ('asc' or 'desc'), default to 'asc'
 
       // Create a filter object for MongoDB's find()
       const filter = { user: userId };
@@ -62,9 +63,19 @@ getTaskById: async (req, res)  => {
           filter.status = req.query.status; 
         }
       }
+
+      // Sorting logic
+      const sort = {}; 
+      if (sortOrder === 'asc') {
+        sort.dueDate = 1; // 1 for ascending
+      } else if (sortOrder === 'desc') {
+        sort.dueDate = -1; // -1 for descending
+      }
+
       const tasks = await Task.find(filter)
       .skip(skip)
       .limit(limit)
+      .sort(sort)
       .lean();
       
       // Get total count of tasks for the user
